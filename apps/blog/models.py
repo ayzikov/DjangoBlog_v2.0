@@ -2,6 +2,8 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import User
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 class Post(models.Model):
     '''
     Модель поста для блога
@@ -47,6 +49,43 @@ class Post(models.Model):
         indexes = [models.Index(fields=['-fixed', '-create', 'status'])]
         verbose_name = 'Статья'
         verbose_name_plural = 'Статьи'
+
+    def __str__(self):
+        return self.title
+
+
+class Category(MPTTModel):
+    '''
+    Модель древовидных категорий для постов
+    '''
+
+    title = models.CharField(verbose_name='Название категории', max_length=50)
+    slug = models.SlugField(verbose_name='URL', blank=True)
+    description = models.CharField(verbose_name='Описание категории', max_length=300)
+    parent = TreeForeignKey(verbose_name='Родительская категория',
+                            to='self',
+                            on_delete=models.CASCADE,
+                            null=True,
+                            blank=True,
+                            db_index=True,
+                            related_name='children'
+                            )
+
+    class MPTTMeta:
+        '''
+        Сортировка по вложенности
+        '''
+
+        order_insertion_by = ('title',)
+
+    class Meta:
+        '''
+        Сортировка, название в админ панели, таблица с данными
+        '''
+
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+        db_table = 'app_categories'
 
     def __str__(self):
         return self.title
