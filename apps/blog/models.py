@@ -18,6 +18,10 @@ class Post(models.Model):
     slug = models.SlugField(verbose_name='URL', blank=True, unique=True)
     description = models.TextField(verbose_name='Краткое описание', max_length=500)
     text = models.TextField(verbose_name='Основной текст поста')
+    category = TreeForeignKey(verbose_name='Категория поста',
+                              to='Category',
+                              on_delete=models.PROTECT,
+                              related_name='posts')
     image = models.ImageField(
         verbose_name='Изображение поста',
         blank=True,
