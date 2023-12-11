@@ -5,6 +5,8 @@ from django.urls import reverse
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from apps.services.utils import unique_slugify
+
 class Post(models.Model):
     '''
     Модель поста для блога
@@ -16,7 +18,7 @@ class Post(models.Model):
     )
 
     title = models.CharField(verbose_name='Название поста', max_length=255)
-    slug = models.SlugField(verbose_name='URL', blank=True, unique=True)
+    slug = models.SlugField(verbose_name='URL', blank=True)
     description = models.TextField(verbose_name='Краткое описание', max_length=500)
     text = models.TextField(verbose_name='Основной текст поста')
     category = TreeForeignKey(verbose_name='Категория поста',
@@ -60,6 +62,14 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('post_detail', kwargs={'slug': self.slug})
+
+    def save(self, *args, **kwargs):
+        '''
+        Вызываем функцию, которая генерирует уникальный slug
+        '''
+
+        self.slug = unique_slugify(self, self.title)
+        super().save(*args, **kwargs)
 
 
 class Category(MPTTModel):
