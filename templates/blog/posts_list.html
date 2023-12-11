@@ -2,7 +2,7 @@
 
 {% block content %}
     {% for post in posts %}
-        <img src={{ post.thumbnail.url }} alt={{ post.title }} width="150"/>
+        <img src={{ post.image.url }} alt={{ post.title }} width="150"/>
         <strong>{{ post.title }}</strong>
         <p>{{ post.description }}</p>
         <small>{{ post.create }}</small>

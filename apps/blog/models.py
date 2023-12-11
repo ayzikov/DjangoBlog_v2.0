@@ -25,7 +25,7 @@ class Post(models.Model):
     image = models.ImageField(
         verbose_name='Изображение поста',
         blank=True,
-        upload_to='images/posts_images',
+        upload_to='images/posts_images/%Y/%m/%d/',
         validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'webp', 'jpeg', 'gif'))]
     )
     status = models.CharField(verbose_name='Статус поста',
